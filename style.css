@@ -1,0 +1,596 @@
+
+/* =========================
+   GENERAL PAGE STYLE
+========================= */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Lato", sans-serif;
+    margin: 0;
+
+    background-image: url("smth.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.sidenav {
+    height: 100%;
+    width: 0;
+
+    position: fixed;
+    z-index: 10;
+    top: 0;
+    left: 0;
+
+    background-color: #c9889a;
+    overflow-x: hidden;
+    padding-top: 60px;
+
+    transition: 0.5s;
+}
+
+.sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #612234;
+
+    display: block;
+    white-space: nowrap;
+    transition: 0.3s;
+}
+
+.sidenav a:hover {
+    color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+}
+
+
+/* =========================
+   SIDEBAR BUTTON
+========================= */
+
+.menu-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+
+    background-color: #c9889a;
+    color: #612234;
+
+    border: 2px solid #e69ecf;
+    border-radius: 50%;
+
+    width: 45px;
+    height: 45px;
+
+    font-size: 28px;
+    cursor: pointer;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    transition: 0.3s ease;
+    z-index: 10;
+}
+
+.menu-button:hover {
+    background-color: #612234;
+    color: white;
+    transform: scale(1.1);
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+header {
+    position: relative;
+
+    background-color: #c9889a;
+    color: white;
+
+    width: 100%;
+    height: 200px;
+    padding: 30px;
+
+    text-align: center;
+
+    background-image: url("lilie.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+
+/* =========================
+   CHARACTER SECTION
+========================= */
+
+.character-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+
+    align-items: flex-start;
+    justify-content: center;
+
+    gap: 15px;
+
+    width: 100%;
+    max-width: 500px;
+    margin: 25px auto;
+    padding: 0 10px;
+}
+
+
+/* =========================
+   CHARACTER INFORMATION
+========================= */
+
+.character-info {
+    width: 350px;
+    min-width: 0;
+    flex: 0 1 260px;
+
+    margin: 0;
+    padding: 12px;
+
+    border: 2px solid #c9889a;
+    background-color: aliceblue;
+}
+
+legend {
+    color: #c9889a;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 0 10px;
+}
+
+
+/* =========================
+   RASHTA IMAGE
+========================= */
+
+.rashta-image {
+    width: 160px;
+    min-width: 160px;
+    flex: 0 0 160px;
+
+    border: 2px solid rgb(230, 158, 207);
+    padding: 3px;
+}
+
+.rashta-image img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+
+/* =========================
+   FADE-IN EFFECT
+========================= */
+
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+
+    transition:
+        opacity 0.8s ease,
+        transform 0.8s ease;
+}
+
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* =========================
+   SMALL SCREEN ADJUSTMENT
+========================= */
+
+@media screen and (max-height: 450px) {
+    .sidenav {
+        padding-top: 15px;
+    }
+
+    .sidenav a {
+        font-size: 18px;
+    }
+}
+
+
+/* =========================
+   ACCESSIBILITY
+========================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .sidenav,
+    .fade-in {
+        transition: none;
+    }
+
+    .fade-in {
+        transform: none;
+    }
+}
+
+
+/* =========================
+   RASHTA IMAGE CAROUSEL
+========================= */
+
+.carousel {
+    position: relative;
+    width: 100%;
+    max-width: 750px;
+    height: 400px;
+    margin: 30px auto;
+    overflow: hidden;
+}
+
+.carousel-track {
+    display: flex;
+    width: max-content;
+    height: 350px;
+
+    transition: transform 0.6s ease-in-out;
+}
+
+.carousel-slide {
+    flex: 0 0 auto;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.carousel-slide img {
+    width: 75%;
+    height: 100%;
+
+    object-fit: contain;
+
+    border: 3px solid #c9889a;
+    padding: 4px;
+    background-color: aliceblue;
+
+    opacity: 0.45;
+    transform: scale(0.8);
+
+    transition:
+        transform 0.6s ease-in-out,
+        opacity 0.6s ease-in-out;
+}
+
+/* CENTER IMAGE */
+
+.carousel-slide.is-center img {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* SIDE IMAGES */
+
+.carousel-slide.is-side img {
+    opacity: 0.45;
+    transform: scale(0.8);
+}
+
+/* ARROWS */
+
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+
+    border: none;
+    border-radius: 50%;
+    padding: 10px 14px;
+
+    background-color: #c9889a;
+    color: #612234;
+
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.carousel-arrow:hover {
+    background-color: #612234;
+    color: white;
+}
+
+.carousel-arrow.left {
+    left: 5px;
+}
+
+.carousel-arrow.right {
+    right: 5px;
+}
+
+/* =========================
+   RASHTA SUPPORT BUTTON
+========================= */
+
+.support-section {
+    display: flex;
+    justify-content: center;
+    margin: 30px auto;
+}
+
+.support-button {
+    padding: 12px 25px;
+
+    background-color: #c9889a;
+    color: #612234;
+
+    border: 2px solid #e69ecf;
+    border-radius: 25px;
+
+    font-family: "Lato", sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        background-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.support-button:hover {
+    background-color: #e69ecf;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(97, 34, 52, 0.25);
+}
+
+.support-button:active {
+    transform: scale(0.95);
+}
+
+
+/* =========================
+   SUPPORT NOTIFICATION
+========================= */
+
+.support-notification {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+
+    z-index: 100;
+
+    padding: 16px 24px;
+
+    background-color: #c9889a;
+    color: #612234;
+
+    border: 2px solid #e69ecf;
+    border-radius: 15px;
+
+    font-size: 16px;
+    font-weight: bold;
+
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+
+    opacity: 0;
+    transform: translateY(20px);
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.4s ease,
+        transform 0.4s ease;
+}
+
+/* WHEN NOTIFICATION APPEARS */
+
+.support-notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* SMALL SCREEN ADJUSTMENT */
+
+@media screen and (max-width: 500px) {
+    .support-notification {
+        right: 50%;
+        transform: translate(50%, 20px);
+        width: max-content;
+        max-width: 90%;
+        text-align: center;
+    }
+
+    .support-notification.show {
+        transform: translate(50%, 0);
+    }
+}
+
+/* =========================
+   GALLERY CATEGORY SELECTOR
+========================= */
+
+.gallery-selector {
+    text-align: center;
+    margin: 25px auto;
+    padding: 10px;
+}
+
+.gallery-selector h2 {
+    color: #612234;
+}
+
+.gallery-options {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.category-button {
+    padding: 10px 22px;
+
+    background-color: #e9b8c6;
+    color: #612234;
+
+    border: 2px solid #c9889a;
+    border-radius: 20px;
+
+    font-family: "Lato", sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.25s ease,
+        transform 0.2s ease;
+}
+
+.category-button:hover {
+    transform: translateY(-2px);
+}
+
+/* SELECTED CATEGORY */
+
+.category-button.active {
+    background-color: #a94f70;
+    color: white;
+    border-color: #612234;
+}
+
+.main-container {
+    background-color: white;
+
+    width: 90%;
+    max-width: 1200px;
+
+    min-height: 90vh;
+
+    margin: 30px auto;
+    padding: 25px;
+
+    border: 3px solid #c9889a;
+    border-radius: 25px;
+
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+}
+
+.rashta-description {
+    background-color: rgba(201, 136, 154, 0.85);
+    color: white;
+
+    width: 85%;
+    max-width: 650px;
+
+    margin: 20px auto;
+    padding: 15px 25px;
+
+    border-radius: 15px;
+
+    text-align: center;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* =========================
+   CART BADGE
+========================= */
+.cart-badge {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+
+    background-color: #c9889a;
+    color: white;
+
+    padding: 8px 16px;
+    border: 2px solid #e69ecf;
+    border-radius: 20px;
+
+    font-size: 14px;
+    font-weight: bold;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+}
+
+/* =========================
+   QUANTITY SELECTOR
+========================= */
+
+.quantity-selector {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+
+    margin: 25px auto;
+    padding: 12px 20px;
+
+    width: fit-content;
+
+    background-color: #f9e9ee;
+    border: 2px solid #c9889a;
+    border-radius: 25px;
+
+    color: #612234;
+    font-weight: bold;
+}
+
+.quantity-label {
+    font-size: 16px;
+}
+
+#productQty {
+    font-size: 18px;
+    min-width: 20px;
+    text-align: center;
+}
+
+.quantity-button {
+    width: 32px;
+    height: 32px;
+
+    border: 1px solid #c9889a;
+    border-radius: 50%;
+
+    background-color: #c9889a;
+    color: white;
+
+    font-size: 20px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.quantity-button:hover {
+    background-color: #612234;
+    transform: scale(1.1);
+}
