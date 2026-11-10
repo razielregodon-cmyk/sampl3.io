@@ -32,6 +32,17 @@
 <!-- MAIN CONTENT BOX -->
 <main class="main-container">
 
+<div class="side-decoration left-decoration">
+    ꩜<br>❀<br>⌇<br>❀<br>꩜<br>
+    ꩜<br>❀<br>⌇<br>❀<br>꩜<br>
+    ꩜<br>❀<br>⌇<br>❀<br>꩜
+</div>
+
+<div class="side-decoration right-decoration">
+    ꩜<br>❀<br>⌇<br>❀<br>꩜<br>
+    ꩜<br>❀<br>⌇<br>❀<br>꩜<br>
+    ꩜<br>❀<br>⌇<br>❀<br>꩜
+</div>
    <header>
     <!-- SIDEBAR BUTTON -->
     <span class="menu-button" onclick="openNav()" aria-label="Open navigation">
@@ -39,13 +50,25 @@
     </span>
 
     <!-- CART BADGE -->
-    <div class="cart-badge">
-        🛒 Cart: <span id="cartCount">0</span>
-    </div>
+   <button class="cart-badge" onclick="toggleCart()">
+    🛒 Cart (<span id="cartCount">0</span>)
+</button>
 
     <h1>RASHTA</h1>
     <p>The Empress</p>
 </header>
+
+<div id="cartPanel" class="cart-panel">
+
+    <h3>Your Rashta Support Cart ♡</h3>
+
+    <div id="cartItems">
+        Your cart is empty. Support Rashta! ♡
+    </div>
+
+    <button onclick="toggleCart()">Close</button>
+
+</div>
 
     <!-- CHARACTER INFORMATION AND IMAGE -->
 
@@ -69,6 +92,10 @@
         </div>
 
     </section>
+
+    <div class="ornament-divider">
+    ꩜ ❀ 〰️ ❀ ꩜
+</div>
 
 
 
@@ -145,36 +172,111 @@
 
     </div>
 
-       <!-- RASHTA DESCRIPTION -->
-    <div class="rashta-description">
-        <p>
-            The late slave empress. May she rest in peace in our hearts.
-        </p>
-    </div>
-
 </section>
 
-<!-- QUANTITY SELECTOR -->
+<!-- IMAGE LIGHTBOX -->
 
-<div class="quantity-selector">
-    <span class="quantity-label">Quantity:</span>
+<div id="imageLightbox" class="lightbox">
 
-    <button class="quantity-button" onclick="changeQuantity(-1)">−</button>
+    <div class="lightbox-content">
 
-    <span id="productQty">1</span>
+        <button class="lightbox-close" onclick="closeLightbox()">
+            &times;
+        </button>
 
-    <button class="quantity-button" onclick="changeQuantity(1)">+</button>
+        <button class="lightbox-arrow left" onclick="changeLightboxImage(-1)">
+            &#10094;
+        </button>
+
+        <img id="lightboxImage" src="" alt="">
+
+        <button class="lightbox-arrow right" onclick="changeLightboxImage(1)">
+            &#10095;
+        </button>
+
+        <div class="lightbox-description">
+            <h3 id="lightboxTitle"></h3>
+            <p id="lightboxText"></p>
+        </div>
+
+    </div>
+
 </div>
 
 <!-- RASHTA SUPPORT BUTTON -->
 
 <section class="support-section fade-in">
 
-    <button class="support-button" onclick="supportRashta()">
+    <button class="support-button" onclick="openPurchasePopup()">
         ♡ Support Rashta ♡
     </button>
 
 </section>
+
+<!-- PURCHASE POPUP -->
+
+<div id="purchasePopup" class="popup-overlay">
+
+    <div class="purchase-popup">
+
+        <h2>♡ Rashta's Boutique ♡</h2>
+
+        <p>Choose your preferred quantity and size!</p>
+
+        <!-- QUANTITY -->
+
+        <div class="popup-quantity">
+
+            <label>Quantity</label>
+
+            <div class="quantity-controls">
+
+                <button onclick="changeQuantity(-1)">−</button>
+
+                <span id="productQty">1</span>
+
+                <button onclick="changeQuantity(1)">+</button>
+
+            </div>
+
+        </div>
+
+        <!-- SIZE -->
+
+        <div class="popup-size">
+
+            <label for="productSize">Choose your size</label>
+
+            <select id="productSize">
+
+                <option value="">Select a size</option>
+                <option value="S">Small</option>
+                <option value="M">Medium</option>
+                <option value="L">Large</option>
+                <option value="XL">Extra Large</option>
+
+            </select>
+
+        </div>
+
+        <!-- BUTTONS -->
+
+        <div class="popup-buttons">
+
+            <button class="add-cart-button" onclick="addToCart()">
+                Add to Cart
+            </button>
+
+            <button class="cancel-button" onclick="closePurchasePopup()">
+                Cancel
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
 <!-- PROMO CODE -->
 <div class="promo-section" style="text-align: center; margin: 20px auto; max-width: 300px;">
     <input type="text" id="promoInput" placeholder="Enter promo code (try WINNER)" style="padding: 8px; width: 60%; border: 2px solid #c9889a; border-radius: 10px 0 0 10px; outline: none;">

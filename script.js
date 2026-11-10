@@ -1,100 +1,294 @@
-/* =========================
-   CART COUNTER & NOTIFICATION
-========================= */
+// ==========================================
+// RASHTA WEBSITE — MAIN JAVASCRIPT
+// ==========================================
 
-let cartCount = 0;
+
+// ==========================================
+// CART VARIABLES
+// ==========================================
+
+let cartItems = [];
 let currentQty = 1;
 let notificationTimeout;
 
-function supportRashta() {
+let currentCategory = "general";
 
-    const notification = document.getElementById("supportNotification");
-    const sound = document.getElementById("notificationSound");
-    const cartDisplay = document.getElementById("cartCount");
 
-    // ADD SELECTED QUANTITY TO CART
-    cartCount += currentQty;
-    cartDisplay.textContent = cartCount;
+// ==========================================
+// BOUTIQUE PURCHASE POPUP
+// ==========================================
 
-    // UPDATE NOTIFICATION
-    notification.textContent =
-        `♡ ${currentQty} Rashta item(s) added to cart! ♡`;
+function openPurchasePopup() {
+    currentQty = 1;
 
-    // PLAY SOUND
-    sound.currentTime = 0;
-    sound.play().catch(error => {
-        console.log("Sound could not play:", error);
-    });
+    const quantityDisplay = document.getElementById("productQty");
 
-    // SHOW NOTIFICATION
-    notification.classList.add("show");
+    if (quantityDisplay) {
+        quantityDisplay.textContent = currentQty;
+    }
 
-    clearTimeout(notificationTimeout);
+    const popup = document.getElementById("purchasePopup");
 
-    // HIDE AFTER 3 SECONDS
-    notificationTimeout = setTimeout(() => {
-        notification.classList.remove("show");
-    }, 3000);
+    if (popup) {
+        popup.classList.add("active");
+    }
+}
+
+function closePurchasePopup() {
+    const popup = document.getElementById("purchasePopup");
+
+    if (popup) {
+        popup.classList.remove("active");
+    }
+}
+
+function changeQuantity(amount) {
+    currentQty = Math.max(1, currentQty + amount);
+
+    const quantityDisplay = document.getElementById("productQty");
+
+    if (quantityDisplay) {
+        quantityDisplay.textContent = currentQty;
+    }
 }
 
 
-/* =========================
-   QUANTITY SELECTOR
-========================= */
+// Boutique purchase button
+function addToCart() {
+    const selectedSize = document.getElementById("productSize").value;
 
-function changeQuantity(amount) {
-
-    currentQty += amount;
-
-    // PREVENT QUANTITY FROM GOING BELOW 1
-    if (currentQty < 1) {
-        currentQty = 1;
+    if (selectedSize === "") {
+        alert("Please select a size first! ♡");
+        return;
     }
 
-    document.getElementById("productQty").textContent = currentQty;
+    const existingItem = cartItems.find(item =>
+        item.category === "boutique" &&
+        item.size === selectedSize
+    );
 
-} // <-- THIS CLOSING BRACE WAS MISSING!
+    if (existingItem) {
+        existingItem.quantity += currentQty;
+    } else {
+        cartItems.push({
+            category: "boutique",
+            filename: "Rashie.jpg",
+            name: "Rashta's Boutique",
+            size: selectedSize,
+            quantity: currentQty
+        });
+    }
 
-/* =========================
-   SIDEBAR
-========================= */
+    updateCart();
+    showCartNotification("Rashta's Boutique");
+    closePurchasePopup();
+}
+
+
+// ==========================================
+// IMAGE SUPPORT CART
+// ==========================================
+
+function addToCart() {
+    const selectedSize = document.getElementById("productSize").value;
+
+    if (selectedSize === "") {
+        alert("Please select a size first! ♡");
+        return;
+    }
+
+    // Identify the image currently displayed in the carousel
+    const currentSlide = slides[currentImage];
+    const currentDisplayedImage = currentSlide?.querySelector("img");
+
+    if (!currentDisplayedImage) return;
+
+    const filename = currentDisplayedImage.getAttribute("src");
+
+    // Check whether this exact image and size already exist
+    const existingItem = cartItems.find(item =>
+        item.category === currentCategory &&
+        item.filename === filename &&
+        item.size === selectedSize
+    );
+
+    if (existingItem) {
+        existingItem.quantity += currentQty;
+    } else {
+        cartItems.push({
+            category: currentCategory,
+            filename: filename,
+            name: filename,
+            size: selectedSize,
+            quantity: currentQty
+        });
+    }
+
+    updateCart();
+    showCartNotification(filename);
+    closePurchasePopup();
+}
+
+
+// Update cart display
+function updateCart() {
+    const cartCount = document.getElementById("cartCount");
+    const cartDisplay = document.getElementById("cartItems");
+
+    const totalQuantity = cartItems.reduce(
+        (total, item) => total + item.quantity,
+        0
+    );
+
+    if (cartCount) {
+        cartCount.textContent = totalQuantity;
+    }
+
+    if (!cartDisplay) return;
+
+    cartDisplay.innerHTML = "";
+
+    if (cartItems.length === 0) {
+        cartDisplay.textContent =
+            "Your cart is empty. Support Rashta! ♡";
+        return;
+    }
+
+    cartItems.forEach(item => {
+        const cartItem = document.createElement("div");
+        cartItem.className = "cart-item";
+
+        const image = document.createElement("img");
+        image.src = item.filename;
+        image.alt = item.name;
+
+        const details = document.createElement("div");
+        details.className = "cart-item-details";
+
+        const name = document.createElement("p");
+        name.textContent = item.name;
+
+        const quantity = document.createElement("p");
+        quantity.textContent = `Quantity: ${item.quantity}`;
+
+        details.appendChild(name);
+        details.appendChild(quantity);
+
+        if (item.size) {
+            const size = document.createElement("p");
+            size.textContent = `Size: ${item.size}`;
+            details.appendChild(size);
+        }
+
+        cartItem.appendChild(image);
+        cartItem.appendChild(details);
+
+        cartDisplay.appendChild(cartItem);
+    });
+}
+
+
+// Open and close cart
+function toggleCart() {
+    const cartPanel = document.getElementById("cartPanel");
+
+    if (cartPanel) {
+        cartPanel.classList.toggle("active");
+    }
+}
+
+
+// ==========================================
+// SUPPORT NOTIFICATION
+// ==========================================
+
+function showCartNotification(itemName) {
+    const notification =
+        document.getElementById("supportNotification");
+
+    const sound =
+        document.getElementById("notificationSound");
+
+    if (notification) {
+        notification.textContent =
+            `♡ ${itemName} has been added to your support cart! ♡`;
+
+        notification.classList.add("show");
+
+        clearTimeout(notificationTimeout);
+
+        notificationTimeout = setTimeout(() => {
+            notification.classList.remove("show");
+        }, 3000);
+    }
+
+    if (sound) {
+        sound.currentTime = 0;
+
+        sound.play().catch(() => {
+            // The browser may require prior user interaction.
+        });
+    }
+}
+
+
+// ==========================================
+// SIDEBAR
+// ==========================================
 
 function openNav() {
-    document.getElementById("mySidenav").style.width = "250px";
-    document.querySelector(".menu-button").style.display = "none";
+    const sidebar = document.getElementById("mySidenav");
+    const menuButton = document.querySelector(".menu-button");
+
+    if (sidebar) {
+        sidebar.style.width = "250px";
+    }
+
+    if (menuButton) {
+        menuButton.style.display = "none";
+    }
 }
 
 function closeNav() {
-    document.getElementById("mySidenav").style.width = "0";
-    document.querySelector(".menu-button").style.display = "flex";
+    const sidebar = document.getElementById("mySidenav");
+    const menuButton = document.querySelector(".menu-button");
+
+    if (sidebar) {
+        sidebar.style.width = "0";
+    }
+
+    if (menuButton) {
+        menuButton.style.display = "flex";
+    }
 }
 
 
-/* =========================
-   FADE-IN OBSERVER
-========================= */
+// ==========================================
+// FADE-IN ANIMATIONS
+// ==========================================
 
-const elements = document.querySelectorAll(".fade-in");
+const fadeElements = document.querySelectorAll(".fade-in");
 
-const observer = new IntersectionObserver((entries) => {
+const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
             entry.target.classList.add("visible");
-            observer.unobserve(entry.target);
         }
     });
+}, {
+    threshold: 0.1
 });
 
-elements.forEach(element => observer.observe(element));
+fadeElements.forEach(element => {
+    observer.observe(element);
+});
 
 
-
-/* =========================
-   GALLERY IMAGE COLLECTIONS
-========================= */
+// ==========================================
+// GALLERY IMAGES
+// ==========================================
 
 const galleryImages = {
-
     general: [
         "Tarash.jpg",
         "Tata.jpg",
@@ -118,276 +312,359 @@ const galleryImages = {
         "Lrashata.jpg",
         "Lra.jpg"
     ]
-
 };
 
 
-/* =========================
-   CAROUSEL VARIABLES
-========================= */
+// ==========================================
+// GALLERY DESCRIPTIONS
+// ==========================================
+
+const galleryDescriptions = {
+    general: [
+        "A moment featuring Rashta.",
+        "A look at Rashta's story.",
+        "Rashta, the former Empress.",
+        "A memorable Rashta moment.",
+        "Another glimpse of Rashta."
+    ],
+
+    manhwa: [
+        "A scene from the manhwa.",
+        "A moment from Rashta's journey.",
+        "A manhwa illustration.",
+        "A scene featuring Rashta.",
+        "Another manhwa moment."
+    ],
+
+    lightNovel: [
+        "A scene from the light novel.",
+        "A moment from the novel.",
+        "A light novel illustration.",
+        "A glimpse into the novel.",
+        "Another novel moment."
+    ]
+};
+
+
+// ==========================================
+// CAROUSEL VARIABLES
+// ==========================================
 
 const carousel = document.querySelector(".carousel");
 const track = document.getElementById("carouselTrack");
 
 let slides = [];
-
 let currentImage = 1;
 let isAnimating = false;
 
 
-/* =========================
-   SET SLIDE WIDTHS
-========================= */
+// ==========================================
+// CAROUSEL POSITIONING
+// ==========================================
 
 function setSlideWidths() {
-
-    const slideWidth = carousel.clientWidth * 0.6;
+    if (!carousel) return;
 
     slides.forEach(slide => {
-
-        slide.style.flex = `0 0 ${slideWidth}px`;
-        slide.style.width = `${slideWidth}px`;
-
+        slide.style.flex = `0 0 ${carousel.clientWidth * 0.6}px`;
     });
-
 }
 
 
-/* =========================
-   POSITION THE TRACK
-========================= */
+function positionTrack() {
+    if (!slides.length || !carousel) return;
 
-function positionTrack(animate = true) {
+    const slideWidth = slides[currentImage].offsetWidth;
 
-    if (slides.length === 0) return;
+    const centerOffset =
+        (carousel.clientWidth - slideWidth) / 2;
 
-    const slideWidth = slides[0].offsetWidth;
+    const translateAmount =
+        slides[currentImage].offsetLeft - centerOffset;
 
-    const offset =
-        carousel.clientWidth / 2 -
-        (currentImage + 0.5) * slideWidth;
-
-    track.style.transition = animate
-        ? "transform 0.6s ease-in-out"
-        : "none";
-
-    track.style.transform = `translateX(${offset}px)`;
-
+    track.style.transform =
+        `translateX(-${translateAmount}px)`;
 }
 
-
-/* =========================
-   UPDATE IMAGE APPEARANCE
-========================= */
 
 function updateSlides() {
-
     slides.forEach((slide, index) => {
-
         slide.classList.remove("is-center", "is-side");
 
         if (index === currentImage) {
-
             slide.classList.add("is-center");
-
-        } else if (
-            index === currentImage - 1 ||
-            index === currentImage + 1
-        ) {
-
+        } else {
             slide.classList.add("is-side");
-
         }
-
     });
-
 }
 
 
-/* =========================
-   BUILD GALLERY
-========================= */
+// ==========================================
+// BUILD GALLERY
+// ==========================================
 
 function buildGallery(category) {
+    if (!track || !galleryImages[category]) return;
+
+    currentCategory = category;
 
     isAnimating = false;
     currentImage = 1;
 
-    track.style.transition = "none";
-    track.style.transform = "translateX(0px)";
+    track.innerHTML = "";
 
-    track.replaceChildren();
+    const images = galleryImages[category];
 
-    // ADD ORIGINAL IMAGES
-
-    galleryImages[category].forEach(filename => {
-
+    // Create actual slides
+    images.forEach(filename => {
         const slide = document.createElement("div");
         slide.className = "carousel-slide";
 
         const image = document.createElement("img");
-
         image.src = filename;
         image.alt = `Rashta - ${category}`;
 
         slide.appendChild(image);
-        track.appendChild(slide);
 
+        track.appendChild(slide);
     });
 
+    // Clone last slide
+    const lastClone = track.lastElementChild.cloneNode(true);
+    track.insertBefore(lastClone, track.firstElementChild);
 
-    // CREATE CLONES FOR INFINITE LOOPING
-
-    const originalSlides = Array.from(track.children);
-
-    const firstClone = originalSlides[0].cloneNode(true);
-    const lastClone = originalSlides[originalSlides.length - 1].cloneNode(true);
-
-    track.insertBefore(lastClone, originalSlides[0]);
+    // Clone first slide
+    const firstClone = track.children[1].cloneNode(true);
     track.appendChild(firstClone);
 
     slides = Array.from(track.children);
 
-
-    // POSITION EVERYTHING
-
     setSlideWidths();
+    positionTrack();
     updateSlides();
-    positionTrack(false);
 
+    // Update selected gallery button
+    document.querySelectorAll(".gallery-selector button")
+        .forEach(button => {
+            button.classList.remove("active");
+        });
 
-    // UPDATE SELECTED BUTTON
+    const categoryButtons = {
+        general: 0,
+        manhwa: 1,
+        lightNovel: 2
+    };
 
-    document.querySelectorAll(".category-button").forEach(button => {
+    const buttons =
+        document.querySelectorAll(".gallery-selector button");
 
-        button.classList.remove("active");
-
-    });
-
-    const selectedButton = document.querySelector(
-        `.category-button[onclick="selectGallery('${category}')"]`
-    );
+    const selectedButton = buttons[categoryButtons[category]];
 
     if (selectedButton) {
         selectedButton.classList.add("active");
     }
-
 }
 
 
-/* =========================
-   CHANGE GALLERY CATEGORY
-========================= */
+// ==========================================
+// SELECT GALLERY CATEGORY
+// ==========================================
 
 function selectGallery(category) {
-
     if (!galleryImages[category]) return;
 
     buildGallery(category);
-
 }
 
 
-/* =========================
-   MOVE CAROUSEL
-========================= */
+// ==========================================
+// MOVE CAROUSEL
+// ==========================================
 
 function moveCarousel(direction) {
-
-    if (isAnimating) return;
+    if (isAnimating || !slides.length) return;
 
     isAnimating = true;
 
     currentImage += direction;
 
-    updateSlides();
-    positionTrack(true);
+    track.style.transition = "transform 0.6s ease-in-out";
 
+    positionTrack();
+    updateSlides();
 }
 
-
-/* =========================
-   ARROW BUTTONS
-========================= */
 
 function nextImage() {
-
     moveCarousel(1);
-
 }
+
 
 function previousImage() {
-
     moveCarousel(-1);
-
 }
 
 
-/* =========================
-   INFINITE LOOP
-========================= */
+// Infinite carousel loop
+if (track) {
+    track.addEventListener("transitionend", () => {
+        if (currentImage === slides.length - 1) {
+            track.style.transition = "none";
+            currentImage = 1;
+            positionTrack();
+            updateSlides();
+        }
 
-track.addEventListener("transitionend", (event) => {
+        if (currentImage === 0) {
+            track.style.transition = "none";
+            currentImage = slides.length - 2;
+            positionTrack();
+            updateSlides();
+        }
 
-    if (
-        event.target !== track ||
-        event.propertyName !== "transform"
-    ) return;
-
-
-    if (currentImage === 0) {
-
-        currentImage = slides.length - 2;
-
-        updateSlides();
-        positionTrack(false);
-
-    }
-
-    else if (currentImage === slides.length - 1) {
-
-        currentImage = 1;
-
-        updateSlides();
-        positionTrack(false);
-
-    }
-
-    isAnimating = false;
-
-});
+        isAnimating = false;
+    });
+}
 
 
-/* =========================
-   WINDOW RESIZE
-========================= */
+if (track) {
+    track.addEventListener("click", event => {
+
+        const clickedImage =
+            event.target.closest(".carousel-slide img");
+
+        if (!clickedImage) return;
+
+        const index = galleryImages[currentCategory]
+            .indexOf(clickedImage.getAttribute("src"));
+
+        if (index !== -1) {
+            openLightbox(currentCategory, index);
+        }
+    });
+}
+
+
+// ==========================================
+// RESIZE CAROUSEL
+// ==========================================
 
 window.addEventListener("resize", () => {
+    if (!slides.length) return;
 
     setSlideWidths();
-    positionTrack(false);
-
+    positionTrack();
 });
 
 
-/* =========================
-   INITIAL GALLERY
-========================= */
+// ==========================================
+// LIGHTBOX
+// ==========================================
 
-buildGallery("general");
+let lightboxCategory = "general";
+let lightboxIndex = 0;
 
-/* =========================
-   PROMO
-========================= */
-function applyPromo() {
-    const code = document.getElementById("promoInput").value.trim().toUpperCase();
-    const msg = document.getElementById("promoMessage");
 
-    if (code === "WINNER" || code === "RASHTA") {
-        msg.style.color = "green";
-        msg.textContent = "🎉 15% Competition Discount Applied!";
-    } else {
-        msg.style.color = "red";
-        msg.textContent = "❌ Invalid promo code";
+function openLightbox(category, index) {
+    lightboxCategory = category;
+    lightboxIndex = index;
+
+    updateLightbox();
+
+    const lightbox = document.getElementById("imageLightbox");
+
+    if (lightbox) {
+        lightbox.classList.add("active");
     }
 }
+
+
+function updateLightbox() {
+    const image = document.getElementById("lightboxImage");
+    const title = document.getElementById("lightboxTitle");
+    const text = document.getElementById("lightboxText");
+
+    const filename = galleryImages[lightboxCategory]?.[lightboxIndex];
+
+    if (!filename) return;
+
+    if (image) {
+        image.src = filename;
+        image.alt = `Rashta - ${lightboxCategory}`;
+    }
+
+    if (title) {
+        title.textContent = filename;
+    }
+
+    if (text) {
+        text.textContent =
+            galleryDescriptions[lightboxCategory]?.[lightboxIndex] || "";
+    }
+}
+
+
+function changeLightboxImage(direction) {
+    const images = galleryImages[lightboxCategory];
+
+    if (!images) return;
+
+    lightboxIndex += direction;
+
+    if (lightboxIndex >= images.length) {
+        lightboxIndex = 0;
+    }
+
+    if (lightboxIndex < 0) {
+        lightboxIndex = images.length - 1;
+    }
+
+    updateLightbox();
+}
+
+
+function closeLightbox() {
+    const lightbox = document.getElementById("imageLightbox");
+
+    if (lightbox) {
+        lightbox.classList.remove("active");
+    }
+}
+
+
+// ==========================================
+// PROMO CODE
+// ==========================================
+
+function applyPromo() {
+    const promoInput = document.getElementById("promoInput");
+    const promoMessage = document.getElementById("promoMessage");
+
+    if (!promoInput || !promoMessage) return;
+
+    const code = promoInput.value.trim().toLowerCase();
+
+    const validCodes = ["avery", "rashta", "winner"];
+
+    if (code === "") {
+        promoMessage.textContent = "Please enter a promo code!";
+        return;
+    }
+
+    if (validCodes.includes(code)) {
+        promoMessage.textContent = `♡ Promo code "${code}" accepted! ♡`;
+        promoMessage.style.color = "#612234";
+    } else {
+        promoMessage.textContent = "Invalid promo code. Try again! ♡";
+        promoMessage.style.color = "#c03955";
+    }
+}
+
+
+// ==========================================
+// INITIALIZE WEBSITE
+// ==========================================
+
+buildGallery("general");
+updateCart();
